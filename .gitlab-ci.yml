@@ -1,0 +1,49 @@
+# 指定需要使用的docker image，请先上传至harbor.yy.com
+image: harbor.yy.com/front_end/efox:node-v14.15
+
+stages:
+  #- build
+  #- deploy
+
+before_script:
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+
+deploy-master:
+  tags:
+    - webfe
+  artifacts:
+      expire_in: 1 week
+      paths:
+      - dist/
+  script:
+    - mkdir dist
+    - yarn
+    - yarn build
+    - yarn ncc
+    - cp -rf .ncc/ ./dist
+    - cp -rf public/ ./dist
+    # - cp -rf ./modules ./dist
+    # - cp -rf ./plugins ./dist
+    # - cp -rf ./public ./dist
+    # - cp -rf ./scripts ./dist
+    # - cp -rf ./sponsors ./dist
+    # - cp ./.eslintignore ./dist
+    # - cp ./.eslintrc ./dist
+    # - cp ./.nvmrc ./dist
+    # - cp ./.prettierignore ./dist
+    # - cp ./.prettierrc ./dist
+    # - cp ./.travis.yml ./dist
+    # - cp ./app.yaml ./dist
+    # - cp ./app-staging.yaml ./dist
+    # - cp ./jest.config.js ./dist
+    - cp ./package.json ./dist
+    # - cp ./rollup.config.js ./dist
+    # - cp ./secrets.tar.enc ./dist
+    # - cp ./unpkg.sketch ./dist
+    # - cp ./yarn.lock ./dist
+  only:
+    - master

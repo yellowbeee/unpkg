@@ -6,7 +6,7 @@ import LRUCache from 'lru-cache';
 import bufferStream from './bufferStream.js';
 
 const npmRegistryURL =
-  process.env.NPM_REGISTRY_URL || 'https://registry.npmjs.org';
+  process.env.NPM_REGISTRY_URL || 'https://npm-registry.duowan.com';
 
 const agent = new https.Agent({
   keepAlive: true
@@ -34,6 +34,10 @@ function isScopedPackageName(packageName) {
   return packageName.startsWith('@');
 }
 
+function isDuowanScopedPackageName(packageName) {
+	return packageName.startsWith('@duowan');
+}
+
 function encodePackageName(packageName) {
   return isScopedPackageName(packageName)
     ? `@${encodeURIComponent(packageName.substring(1))}`
@@ -43,6 +47,8 @@ function encodePackageName(packageName) {
 async function fetchPackageInfo(packageName, log) {
   const name = encodePackageName(packageName);
   const infoURL = `${npmRegistryURL}/${name}`;
+
+  console.log(infoURL)
 
   log.debug('Fetching package info for %s from %s', packageName, infoURL);
 
